@@ -27,6 +27,13 @@ public class ClimaService {
         }
 
 
+        if (climaRepository.existsByCidadeAndData(climaRequest.cidade(), LocalDate.parse(climaRequest.data()))) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Já existe dado meteorológico cadastrado para esta cidade na data informada!");
+        }
+
+
+
         Clima clima =  new Clima(
                 climaRequest.cidade(),
                 LocalDate.parse(climaRequest.data()),
