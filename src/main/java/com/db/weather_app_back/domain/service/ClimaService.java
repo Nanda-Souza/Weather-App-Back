@@ -19,7 +19,7 @@ public class ClimaService {
 
     public ClimaService(ClimaRepository climaRepository) {this.climaRepository = climaRepository;}
 
-    public ClimaResponse cadastrarClima(ClimaRequest climaRequest) {
+    public ClimaResponse cadastrarDadoMeteorologico(ClimaRequest climaRequest) {
 
         if (!DataValidator.dataDeCadastroValida(climaRequest.data())){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
@@ -54,6 +54,27 @@ public class ClimaService {
                 climaSalvo.getVelocidadeVento()
         );
 
+    }
+
+    public ClimaResponse buscarDadoMeteorologicoPorId(Long id){
+        Clima clima = climaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Dado Meteorológico com Id " + id + " não encontrado!")
+                );
+
+        return new ClimaResponse(
+                clima.getId(),
+                clima.getCidade(),
+                clima.getData().toString(),
+                clima.getTempoDia().toString(),
+                clima.getTempoNoite().toString(),
+                clima.getTempMinima(),
+                clima.getTempMaxima(),
+                clima.getPrecipitacao(),
+                clima.getHumidade(),
+                clima.getVelocidadeVento()
+        );
     }
 
 
