@@ -31,13 +31,31 @@ public class Clima {
 
     private String cidade;
     private LocalDate data;
+
+    @Enumerated(EnumType.STRING)
     private Tempo tempoDia;
+
+    @Enumerated(EnumType.STRING)
     private Tempo tempoNoite;
     private int tempMinima;
     private int tempMaxima;
     private int precipitacao;
     private int humidade;
     private int velocidadeVento;
+
+
+    public Clima(String cidade, LocalDate data, Tempo tempoDia, Tempo tempoNoite, int tempMinima, int tempMaxima, int precipitacao, int humidade, int velocidadeVento) {
+        this.cidade = cidade;
+        this.data = data;
+        this.tempoDia = tempoDia;
+        this.tempoNoite = tempoNoite;
+        this.tempMinima = tempMinima;
+        this.tempMaxima = tempMaxima;
+        this.precipitacao = precipitacao;
+        this.humidade = humidade;
+        this.velocidadeVento = velocidadeVento;
+    }
+
 
 
 }

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public record ClimaResponse(
         Long id,
         String cidade,
-        LocalDate data,
+        String data,
         String tempoDia,
         String tempoNoite,
         int tempMinima,
