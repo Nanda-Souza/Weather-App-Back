@@ -3,14 +3,12 @@ package com.db.weather_app_back.domain.dto;
 import com.db.weather_app_back.domain.entity.Tempo;
 import jakarta.validation.constraints.*;
 
-import java.time.LocalDate;
-
 public record ClimaRequest(
         @NotBlank(message = "O campo cidade é obrigatório!")
         String cidade,
 
         @NotNull(message = "O campo data é obrigatório!")
-        LocalDate data,
+        String data,
 
         @NotNull(message = "O campo tempoDia é obrigatório!")
         Tempo tempoDia,
