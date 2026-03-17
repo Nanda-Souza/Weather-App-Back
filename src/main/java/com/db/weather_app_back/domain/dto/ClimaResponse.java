@@ -9,7 +9,7 @@ public record ClimaResponse(
         String tempoDia,
         String tempoNoite,
         int tempMinima,
-        int temMaxima,
+        int tempMaxima,
         int precipitacao,
         int humidade,
         int velocidadeVento
