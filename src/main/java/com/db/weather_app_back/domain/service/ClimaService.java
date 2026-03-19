@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ClimaService {
@@ -82,6 +83,47 @@ public class ClimaService {
                 clima.getHumidade(),
                 clima.getVelocidadeVento()
         );
+    }
+
+    public List<ClimaResponse> buscarDadoMeteorologicoPorCidade(String cidade){
+        LocalDate diaDehoje = LocalDate.now();
+        List<Clima> climas;
+
+        if (cidade == null || cidade.isBlank()) {
+
+            climas = climaRepository
+                    .findByDataGreaterThanEqualOrderByDataAsc(diaDehoje);
+
+            if (climas.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Nenhum dado meteorológico cadastrado!");
+            }
+
+        } else {
+            climas = climaRepository
+                    .findAllByCidadeAndDataGreaterThanEqualOrderByDataAsc(cidade, diaDehoje);
+
+            if (climas.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Nenhum dado meteorológico cadastrado para a cidade: " + cidade + "!");
+            }
+        }
+
+            return climas.stream()
+                    .map(clima -> new ClimaResponse(
+                            clima.getId(),
+                            clima.getCidade(),
+                            clima.getData().toString(),
+                            clima.getTempoDia().toString(),
+                            clima.getTempoNoite().toString(),
+                            clima.getTempMinima(),
+                            clima.getTempMaxima(),
+                            clima.getPrecipitacao(),
+                            clima.getHumidade(),
+                            clima.getVelocidadeVento()
+                    ))
+                    .toList();
+
     }
 
 
