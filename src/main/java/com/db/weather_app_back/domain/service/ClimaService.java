@@ -6,7 +6,6 @@ import com.db.weather_app_back.domain.entity.Clima;
 import com.db.weather_app_back.domain.repository.ClimaRepository;
 import com.db.weather_app_back.domain.validation.DataValidator;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -85,7 +84,7 @@ public class ClimaService {
         );
     }
 
-    public List<ClimaResponse> buscarDadoMeteorologicoPorCidade(String cidade){
+    public List<ClimaResponse> listarDadoMeteorologico(String cidade){
         LocalDate diaDehoje = LocalDate.now();
         List<Clima> climas;
 

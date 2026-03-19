@@ -56,19 +56,19 @@ public class ClimaController {
         return ResponseEntity.ok(climaService.buscarDadoMeteorologicoPorId(id));
     }
 
-    @Operation(description = "Busca todoso os dados meteorológicos disponiveis ou filtrando pela cidade")
+    @Operation(description = "Lista todos os dados meteorológicos disponíveis ou filtrando pela cidade")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna todos os dados meteorológicos"),
             @ApiResponse(responseCode = "200", description = "Retorna todos os dados meteorológicos filtrando pela cidade informada"),
             @ApiResponse(responseCode = "404", description = "Não tem nenhum dado meteorológico cadastrado"),
             @ApiResponse(responseCode = "404", description = "Não tem nenhum dado meteorológico cadastrado filtrando pela cidade informada")
     })
-    @GetMapping("/buscar")
-    public ResponseEntity<List<ClimaResponse>> buscarDadoMeteorologicoPorCidade(
+    @GetMapping("/listar")
+    public ResponseEntity<List<ClimaResponse>> listarDadosMeteorologicos(
             @RequestParam(required = false) String cidade
 
     ) {
-        return ResponseEntity.ok(climaService.buscarDadoMeteorologicoPorCidade(cidade));
+        return ResponseEntity.ok(climaService.listarDadoMeteorologico(cidade));
     }
 
 }

@@ -202,7 +202,7 @@ public class ClimaServiceTest {
         when(climaRepository.findByDataGreaterThanEqualOrderByDataAsc(dataDeHoje))
                 .thenReturn(List.of(clima));
 
-        List<ClimaResponse> response = climaService.buscarDadoMeteorologicoPorCidade(null);
+        List<ClimaResponse> response = climaService.listarDadoMeteorologico(null);
 
         assertNotNull(response, "O retorno não pode ser nulo!");
         assertEquals(1, response.size(), "Deve retornar uma lista com apenas um resultado!");
@@ -222,7 +222,7 @@ public class ClimaServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> climaService.buscarDadoMeteorologicoPorCidade(null)
+                () -> climaService.listarDadoMeteorologico(null)
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode(), "Deve retornar status code 404!");
@@ -255,7 +255,7 @@ public class ClimaServiceTest {
                 .thenReturn(List.of(clima));
 
         List<ClimaResponse> response =
-                climaService.buscarDadoMeteorologicoPorCidade("Canoas");
+                climaService.listarDadoMeteorologico("Canoas");
 
         assertNotNull(response, "O retorno não pode ser nulo!");
         assertEquals(1, response.size(), "Deve retornar uma lista com apenas um resultado!");
@@ -277,7 +277,7 @@ public class ClimaServiceTest {
 
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
-                () -> climaService.buscarDadoMeteorologicoPorCidade("Canoas")
+                () -> climaService.listarDadoMeteorologico("Canoas")
         );
 
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode(), "Deve retornar status code 404!");

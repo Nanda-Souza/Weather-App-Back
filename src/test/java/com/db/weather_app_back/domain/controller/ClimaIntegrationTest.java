@@ -137,7 +137,7 @@ public class ClimaIntegrationTest {
                         .content(json))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/clima/buscar"))
+        mockMvc.perform(get("/clima/listar"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].cidade").value("Canoas"))
@@ -176,7 +176,7 @@ public class ClimaIntegrationTest {
                         .content(json))
                 .andExpect(status().isCreated());
 
-        mockMvc.perform(get("/clima/buscar")
+        mockMvc.perform(get("/clima/listar")
                         .param("cidade", "Canoas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].cidade").value("Canoas"))
