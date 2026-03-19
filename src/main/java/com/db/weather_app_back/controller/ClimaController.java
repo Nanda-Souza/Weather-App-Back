@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/clima")
@@ -53,6 +54,14 @@ public class ClimaController {
             @PathVariable Long id
     ) {
         return ResponseEntity.ok(climaService.buscarDadoMeteorologicoPorId(id));
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ClimaResponse>> buscarDadoMeteorologicoPorCidade(
+            @RequestParam(required = false) String cidade
+
+    ) {
+        return ResponseEntity.ok(climaService.buscarDadoMeteorologicoPorCidade(cidade));
     }
 
 }
