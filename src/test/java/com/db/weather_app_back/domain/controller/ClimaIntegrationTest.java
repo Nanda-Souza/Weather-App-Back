@@ -14,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 import static org.hamcrest.Matchers.hasKey;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -108,6 +110,84 @@ public class ClimaIntegrationTest {
                 .andExpect(jsonPath("$.humidade").value(10))
                 .andExpect(jsonPath("$.velocidadeVento").value(15));
 
+    }
+
+    @Test
+    @DisplayName("Deve retornar lista de dados meteorológicos sem informar cidade!")
+    void deveRetornarDadosSemCidadeInformada() throws Exception {
+
+        LocalDate diaDeHoje = LocalDate.now().plusDays(1);
+
+        String json = """
+        {
+            "cidade": "Canoas",
+            "data": "%s",
+            "tempoDia": "LIMPO",
+            "tempoNoite": "LIMPO",
+            "tempMinima": 10,
+            "tempMaxima": 20,
+            "precipitacao": 5,
+            "humidade": 10,
+            "velocidadeVento": 15
+        }
+        """.formatted(diaDeHoje);
+
+        mockMvc.perform(post("/clima/cadastrar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/clima/buscar"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].cidade").value("Canoas"))
+                .andExpect(jsonPath("$[0].data").value(diaDeHoje.toString()))
+                .andExpect(jsonPath("$[0].tempoDia").value("LIMPO"))
+                .andExpect(jsonPath("$[0].tempoNoite").value("LIMPO"))
+                .andExpect(jsonPath("$[0].tempMinima").value(10))
+                .andExpect(jsonPath("$[0].tempMaxima").value(20))
+                .andExpect(jsonPath("$[0].precipitacao").value(5))
+                .andExpect(jsonPath("$[0].humidade").value(10))
+                .andExpect(jsonPath("$[0].velocidadeVento").value(15));
+    }
+
+    @Test
+    @DisplayName("Deve retornar dados meteorológicos filtrando por cidade!")
+    void deveRetornarDadosComCidadeInformada() throws Exception {
+
+        LocalDate diaDeHoje = LocalDate.now().plusDays(1);
+
+        String json = """
+        {
+            "cidade": "Canoas",
+            "data": "%s",
+            "tempoDia": "LIMPO",
+            "tempoNoite": "LIMPO",
+            "tempMinima": 10,
+            "tempMaxima": 20,
+            "precipitacao": 5,
+            "humidade": 10,
+            "velocidadeVento": 15
+        }
+        """.formatted(diaDeHoje);;
+
+        mockMvc.perform(post("/clima/cadastrar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get("/clima/buscar")
+                        .param("cidade", "Canoas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].cidade").value("Canoas"))
+                .andExpect(jsonPath("$[0].data").value(diaDeHoje.toString()))
+                .andExpect(jsonPath("$[0].tempoDia").value("LIMPO"))
+                .andExpect(jsonPath("$[0].tempoNoite").value("LIMPO"))
+                .andExpect(jsonPath("$[0].tempMinima").value(10))
+                .andExpect(jsonPath("$[0].tempMaxima").value(20))
+                .andExpect(jsonPath("$[0].precipitacao").value(5))
+                .andExpect(jsonPath("$[0].humidade").value(10))
+                .andExpect(jsonPath("$[0].velocidadeVento").value(15));
     }
 
 

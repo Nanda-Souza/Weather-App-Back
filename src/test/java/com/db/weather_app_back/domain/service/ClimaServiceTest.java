@@ -215,9 +215,9 @@ public class ClimaServiceTest {
     @DisplayName("Deve lançar exceção 404 quando não houver dados e cidade não for informada!")
     void deveLancarExcecaoQuandoNaoHouverDadosSemCidadeInformada() {
 
-        LocalDate hoje = LocalDate.now();
+        LocalDate diaDeHoje = LocalDate.now();
 
-        when(climaRepository.findByDataGreaterThanEqualOrderByDataAsc(hoje))
+        when(climaRepository.findByDataGreaterThanEqualOrderByDataAsc(diaDeHoje))
                 .thenReturn(List.of());
 
         ResponseStatusException exception = assertThrows(
@@ -229,7 +229,7 @@ public class ClimaServiceTest {
         assertEquals("Nenhum dado meteorológico cadastrado!",
                 exception.getReason(), "Deve retornar mensagem de nenhum dado meteorológico cadastrado!");
 
-        verify(climaRepository).findByDataGreaterThanEqualOrderByDataAsc(hoje);
+        verify(climaRepository).findByDataGreaterThanEqualOrderByDataAsc(diaDeHoje);
     }
 
     @Test
