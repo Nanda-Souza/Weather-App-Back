@@ -6,7 +6,6 @@ import com.db.weather_app_back.domain.entity.Clima;
 import com.db.weather_app_back.domain.repository.ClimaRepository;
 import com.db.weather_app_back.domain.validation.DataValidator;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -123,6 +122,34 @@ public class ClimaService {
                             clima.getVelocidadeVento()
                     ))
                     .toList();
+
+    }
+
+    public ClimaResponse buscarDadoMeteorologicoDoDiaAtualPorCidade(String cidade){
+        LocalDate dataDeHoje = LocalDate.now();
+
+
+
+        Clima clima = climaRepository.findByCidadeAndData(cidade, dataDeHoje)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Nenhum dado meteorológico do dia de hoje para a cidade: " + cidade + "!")
+                );
+
+        return new ClimaResponse(
+                clima.getId(),
+                clima.getCidade(),
+                clima.getData().toString(),
+                clima.getTempoDia().toString(),
+                clima.getTempoNoite().toString(),
+                clima.getTempMinima(),
+                clima.getTempMaxima(),
+                clima.getPrecipitacao(),
+                clima.getHumidade(),
+                clima.getVelocidadeVento()
+        );
+
+
 
     }
 
