@@ -77,11 +77,11 @@ public class ClimaController {
             @ApiResponse(responseCode = "404", description = "Não tem nenhum dado meteorológico do dia atual da cidade pesquisada"),
     })
     @GetMapping("/buscar/hoje")
-    public ResponseEntity<List<ClimaResponse>> buscarDadoMeteorologicoDoDiaAtualPorCidade(
+    public ResponseEntity<ClimaResponse> buscarDadoMeteorologicoDoDiaAtualPorCidade(
             @RequestParam String cidade
 
     ) {
-        return ResponseEntity.ok(climaService.buscarDadoMeteorologicoPorCidade(cidade));
+        return ResponseEntity.ok(climaService.buscarDadoMeteorologicoDoDiaAtualPorCidade(cidade));
     }
 
 }
