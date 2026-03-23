@@ -288,6 +288,63 @@ public class ClimaServiceTest {
                 .findAllByCidadeAndDataGreaterThanEqualOrderByDataAsc("Canoas", hoje);
     }
 
+    @Test
+    @DisplayName("Deve retornar os dados meteorológicos do dia atual para a cidade com sucesso!")
+    void deveRetornarDadosDoDiaAtualPorCidadeComSucesso() {
+
+        String cidade = "Canoas";
+        LocalDate dataDeHoje = LocalDate.now();
+
+        Clima clima = new Clima(
+                cidade,
+                dataDeHoje,
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        when(climaRepository.findByCidadeAndData(cidade, dataDeHoje))
+                .thenReturn(Optional.of(clima));
+
+        ClimaResponse response =
+                climaService.buscarDadoMeteorologicoDoDiaAtualPorCidade(cidade);
+
+        assertNotNull(response, "O retorno não pode ser nulo!");
+        assertEquals("Canoas", response.cidade(), "Deve retornar Canoas!");
+        assertEquals(dataDeHoje.toString(), response.data(), "Deve retornar a data de hoje!");
+
+        verify(climaRepository).findByCidadeAndData(cidade, dataDeHoje);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção 404 quando não houver dados meteorológicos do dia atual para a cidade!")
+    void deveLancarExcecaoQuandoNaoEncontrarDadosDoDiaAtualPorCidade() {
+
+        String cidade = "Canoas";
+        LocalDate hoje = LocalDate.now();
+
+        when(climaRepository.findByCidadeAndData(cidade, hoje))
+                .thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> climaService.buscarDadoMeteorologicoDoDiaAtualPorCidade(cidade)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode(),
+                "Deve retornar status code 404!");
+
+        assertEquals("Nenhum dado meteorológico do dia de hoje para a cidade: Canoas!",
+                exception.getReason(),
+                "Deve retornar mensagem de nenhum dado meteorológico do dia de hoje para Canoas!");
+
+        verify(climaRepository).findByCidadeAndData(cidade, hoje);
+    }
+
 
 
 }
