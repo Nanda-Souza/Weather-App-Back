@@ -93,7 +93,7 @@ public class ClimaServiceTest {
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> climaService.cadastrarDadoMeteorologico(request)
-                );
+        );
 
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode(), "Deve retornar status code 409!");
         assertEquals("Já existe dado meteorológico cadastrado para esta cidade na data informada!",

@@ -108,20 +108,20 @@ public class ClimaService {
             }
         }
 
-            return climas.stream()
-                    .map(clima -> new ClimaResponse(
-                            clima.getId(),
-                            clima.getCidade(),
-                            clima.getData().toString(),
-                            clima.getTempoDia().toString(),
-                            clima.getTempoNoite().toString(),
-                            clima.getTempMinima(),
-                            clima.getTempMaxima(),
-                            clima.getPrecipitacao(),
-                            clima.getHumidade(),
-                            clima.getVelocidadeVento()
-                    ))
-                    .toList();
+        return climas.stream()
+                .map(clima -> new ClimaResponse(
+                        clima.getId(),
+                        clima.getCidade(),
+                        clima.getData().toString(),
+                        clima.getTempoDia().toString(),
+                        clima.getTempoNoite().toString(),
+                        clima.getTempMinima(),
+                        clima.getTempMaxima(),
+                        clima.getPrecipitacao(),
+                        clima.getHumidade(),
+                        clima.getVelocidadeVento()
+                ))
+                .toList();
 
     }
 

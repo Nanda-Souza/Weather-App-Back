@@ -99,7 +99,7 @@ public class ClimaIntegrationTest {
         Long id = idNumber.longValue();
 
         mockMvc.perform(get("/clima/{id}", id)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.cidade").value("Canoas"))
                 .andExpect(jsonPath("$.data").value("2026-03-16"))
                 .andExpect(jsonPath("$.tempoDia").value("LIMPO"))
