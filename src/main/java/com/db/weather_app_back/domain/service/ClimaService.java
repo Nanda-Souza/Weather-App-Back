@@ -108,20 +108,20 @@ public class ClimaService {
             }
         }
 
-            return climas.stream()
-                    .map(clima -> new ClimaResponse(
-                            clima.getId(),
-                            clima.getCidade(),
-                            clima.getData().toString(),
-                            clima.getTempoDia().toString(),
-                            clima.getTempoNoite().toString(),
-                            clima.getTempMinima(),
-                            clima.getTempMaxima(),
-                            clima.getPrecipitacao(),
-                            clima.getHumidade(),
-                            clima.getVelocidadeVento()
-                    ))
-                    .toList();
+        return climas.stream()
+                .map(clima -> new ClimaResponse(
+                        clima.getId(),
+                        clima.getCidade(),
+                        clima.getData().toString(),
+                        clima.getTempoDia().toString(),
+                        clima.getTempoNoite().toString(),
+                        clima.getTempMinima(),
+                        clima.getTempMaxima(),
+                        clima.getPrecipitacao(),
+                        clima.getHumidade(),
+                        clima.getVelocidadeVento()
+                ))
+                .toList();
 
     }
 
@@ -149,7 +149,41 @@ public class ClimaService {
                 clima.getVelocidadeVento()
         );
 
+    }
 
+    public List<ClimaResponse> buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(String cidade, int dia){
+        LocalDate dataDeHoje = LocalDate.now();
+        LocalDate dataSeteDias = dataDeHoje.plusDays(dia);
+        List<Clima> climas;
+
+        if (dia < 1 || dia > 7 ) {
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY,
+                    "A previsão do tempo deve ser até para os proximo 7 dias!");
+
+        }
+
+        climas = climaRepository
+                .findByCidadeAndDataBetween(cidade, dataDeHoje, dataSeteDias);
+
+        if (climas.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
+                    "Nenhum dado meteorológico para os próximos sete dias para a cidade: " + cidade + "!");
+        }
+
+        return climas.stream()
+                .map(clima -> new ClimaResponse(
+                        clima.getId(),
+                        clima.getCidade(),
+                        clima.getData().toString(),
+                        clima.getTempoDia().toString(),
+                        clima.getTempoNoite().toString(),
+                        clima.getTempMinima(),
+                        clima.getTempMaxima(),
+                        clima.getPrecipitacao(),
+                        clima.getHumidade(),
+                        clima.getVelocidadeVento()
+                ))
+                .toList();
 
     }
 

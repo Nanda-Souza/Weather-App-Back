@@ -74,7 +74,7 @@ public class ClimaController {
     @Operation(description = "Busca os dados meteorológicos para o dia atual da cidade informada")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Retorna o dado meteorológico do dia atual da cidade pesquisada"),
-            @ApiResponse(responseCode = "404", description = "Não tem nenhum dado meteorológico do dia atual da cidade pesquisada"),
+            @ApiResponse(responseCode = "404", description = "Não tem nenhum dado meteorológico do dia atual da cidade pesquisada")
     })
     @GetMapping("/buscar/hoje")
     public ResponseEntity<ClimaResponse> buscarDadoMeteorologicoDoDiaAtualPorCidade(
@@ -82,6 +82,21 @@ public class ClimaController {
 
     ) {
         return ResponseEntity.ok(climaService.buscarDadoMeteorologicoDoDiaAtualPorCidade(cidade));
+    }
+
+    @Operation(description = "Busca os dados meteorológicos para os próximos sete dias da cidade informada")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna os dados meteorológicos dos próximos sete dias da cidade pesquisada"),
+            @ApiResponse(responseCode = "404", description = "Não tem nenhum dado meteorológico para os próximos sete dias da cidade pesquisada"),
+            @ApiResponse(responseCode = "409", description = "Não tem nenhum dado meteorológico pois o a quantidade de dias informada é inválida")
+    })
+    @GetMapping("/buscar/proximos/{dias}/dias")
+    public ResponseEntity<List<ClimaResponse>> buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(
+            @RequestParam String cidade,
+            @PathVariable int dias
+
+    ) {
+        return ResponseEntity.ok(climaService.buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(cidade, dias));
     }
 
 }
