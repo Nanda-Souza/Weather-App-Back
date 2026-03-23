@@ -93,7 +93,7 @@ public class ClimaServiceTest {
         ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> climaService.cadastrarDadoMeteorologico(request)
-                );
+        );
 
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode(), "Deve retornar status code 409!");
         assertEquals("Já existe dado meteorológico cadastrado para esta cidade na data informada!",
@@ -325,9 +325,9 @@ public class ClimaServiceTest {
     void deveLancarExcecaoQuandoNaoEncontrarDadosDoDiaAtualPorCidade() {
 
         String cidade = "Canoas";
-        LocalDate hoje = LocalDate.now();
+        LocalDate dataDeHoje = LocalDate.now();
 
-        when(climaRepository.findByCidadeAndData(cidade, hoje))
+        when(climaRepository.findByCidadeAndData(cidade, dataDeHoje))
                 .thenReturn(Optional.empty());
 
         ResponseStatusException exception = assertThrows(
@@ -342,7 +342,122 @@ public class ClimaServiceTest {
                 exception.getReason(),
                 "Deve retornar mensagem de nenhum dado meteorológico do dia de hoje para Canoas!");
 
-        verify(climaRepository).findByCidadeAndData(cidade, hoje);
+        verify(climaRepository).findByCidadeAndData(cidade, dataDeHoje);
+    }
+
+    @Test
+    @DisplayName("Deve retornar os dados meteorológicos dos próximos dias para a cidade com sucesso!")
+    void deveRetornarDadosDosProximosDiasPorCidadeComSucesso() {
+
+        String cidade = "Canoas";
+        int dias = 3;
+
+        LocalDate dataDehoje = LocalDate.now();
+
+        Clima climaUm = new Clima(
+                cidade,
+                dataDehoje.plusDays(1),
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        Clima climaDois = new Clima(
+                cidade,
+                dataDehoje.plusDays(2),
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        Clima climaTres = new Clima(
+                cidade,
+                dataDehoje.plusDays(3),
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        when(climaRepository.findByCidadeAndDataBetween(cidade, dataDehoje, dataDehoje.plusDays(dias)))
+                .thenReturn(List.of(climaUm, climaDois, climaTres));
+
+        List<ClimaResponse> response =
+                climaService.buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(cidade, dias);
+
+        assertNotNull(response, "O retorno não pode ser nulo!");
+        assertEquals(3, response.size(), "Deve retornar 2 resultados!");
+        assertEquals("Canoas", response.get(0).cidade(), "Primeiro resultado deve retornar Canoas!");
+        assertEquals("Canoas", response.get(1).cidade(), "Segundo resultado deve retornar Canoas!");
+        assertEquals("Canoas", response.get(2).cidade(), "Segundo resultado deve retornar Canoas!");
+        assertEquals(climaUm.getData().toString(), response.get(0).data(), "Deve retornar a data correta para cidade de Canoas!");
+        assertEquals(climaDois.getData().toString(), response.get(1).data(), "Deve retornar a data correta para cidade de Canoas!");
+        assertEquals(climaTres.getData().toString(), response.get(2).data(), "Deve retornar a data correta para cidade de Canoas!");
+
+        verify(climaRepository)
+                .findByCidadeAndDataBetween(cidade, dataDehoje, dataDehoje.plusDays(dias));
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção 422 quando a quantidade de dias for inválida!")
+    void deveLancarExcecaoQuandoNumeroDeDiasForInvalido() {
+
+        String cidade = "Canoas";
+        int dias = 0;
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> climaService.buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(cidade, dias)
+        );
+
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode(),
+                "Deve retornar status code 422!");
+
+        assertEquals("A previsão do tempo deve ser até para os proximo 7 dias!",
+                exception.getReason(),
+                "Deve retornar que a previsão do tempo deve ser até para os proximo 7 dias!");
+
+        verify(climaRepository, never())
+                .findByCidadeAndDataBetween(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção 404 quando não houver dados para os próximos dias!")
+    void deveLancarExcecaoQuandoNaoHouverDados() {
+
+        String cidade = "Canoas";
+        int dias = 3;
+
+        LocalDate hoje = LocalDate.now();
+
+        when(climaRepository.findByCidadeAndDataBetween(cidade, hoje, hoje.plusDays(dias)))
+                .thenReturn(List.of());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> climaService.buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(cidade, dias)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode(),
+                "Deve retornar status code 404!");
+
+        assertEquals("Nenhum dado meteorológico para os próximos sete dias para a cidade: Canoas!",
+                exception.getReason(),
+                "Deve retornar mensagem de não encontrado!");
+
+        verify(climaRepository)
+                .findByCidadeAndDataBetween(cidade, hoje, hoje.plusDays(dias));
     }
 
 
