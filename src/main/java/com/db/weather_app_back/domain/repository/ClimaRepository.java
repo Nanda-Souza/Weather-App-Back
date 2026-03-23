@@ -8,9 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClimaRepository extends JpaRepository<Clima, Long> {
-    Optional<Clima> findByCidadeAndData(String cidade, LocalDate data);
+    Optional<Clima> findByCidadeAndData(String cidade, LocalDate dataDeHoje);
     boolean existsByCidadeAndData(String cidade, LocalDate data);
     List<Clima> findAllByCidadeAndDataGreaterThanEqualOrderByDataAsc(String cidade, LocalDate data);
     List<Clima> findByDataGreaterThanEqualOrderByDataAsc(LocalDate data);
+    List<Clima> findByCidadeAndDataBetween(String cidade, LocalDate dataDeHoje, LocalDate dataSeteDias);
 
 }
