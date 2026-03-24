@@ -2,6 +2,7 @@ package com.db.weather_app_back.domain.service;
 
 import com.db.weather_app_back.domain.dto.ClimaRequest;
 import com.db.weather_app_back.domain.dto.ClimaResponse;
+import com.db.weather_app_back.domain.dto.ClimaUpdateRequest;
 import com.db.weather_app_back.domain.entity.Clima;
 import com.db.weather_app_back.domain.repository.ClimaRepository;
 import com.db.weather_app_back.domain.validation.DataValidator;
@@ -184,6 +185,64 @@ public class ClimaService {
                         clima.getVelocidadeVento()
                 ))
                 .toList();
+
+    }
+
+    public ClimaResponse editarDadosMeteorologicos(Long id, ClimaUpdateRequest climaUpdateRequest){
+        Clima clima = climaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Dado Meteorológico com Id " + id + " não encontrado!")
+                );
+
+        if (climaUpdateRequest.tempoDia() != null){
+            clima.setTempoDia(climaUpdateRequest.tempoDia());
+        }
+
+        if (climaUpdateRequest.tempoNoite() != null){
+            clima.setTempoDia(climaUpdateRequest.tempoNoite());
+        }
+
+        Integer tempMinima = climaUpdateRequest.tempMinima();
+        if (tempMinima != null){
+            clima.setTempMinima(climaUpdateRequest.tempMinima());
+        }
+
+        Integer tempMaxima = climaUpdateRequest.tempMaxima();
+        if (tempMaxima != null){
+            clima.setTempMaxima(climaUpdateRequest.tempMaxima());
+        }
+
+        Integer precipitacao = climaUpdateRequest.precipitacao();
+        if (precipitacao != null){
+            clima.setPrecipitacao(climaUpdateRequest.precipitacao());
+        }
+
+        Integer humidade = climaUpdateRequest.humidade();
+        if (humidade != null){
+            clima.setHumidade(climaUpdateRequest.humidade());
+        }
+
+        Integer velocidadeVento = climaUpdateRequest.velocidadeVento();
+        if (velocidadeVento != null){
+            clima.setVelocidadeVento(climaUpdateRequest.velocidadeVento());
+        }
+
+        Clima climaAtualizado = climaRepository.save(clima);
+
+        return new ClimaResponse(
+                climaAtualizado.getId(),
+                climaAtualizado.getCidade(),
+                climaAtualizado.getData().toString(),
+                climaAtualizado.getTempoDia().toString(),
+                climaAtualizado.getTempoNoite().toString(),
+                climaAtualizado.getTempMinima(),
+                climaAtualizado.getTempMaxima(),
+                climaAtualizado.getPrecipitacao(),
+                climaAtualizado.getHumidade(),
+                climaAtualizado.getVelocidadeVento()
+        );
+
 
     }
 

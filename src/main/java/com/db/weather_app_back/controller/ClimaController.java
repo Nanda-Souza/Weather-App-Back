@@ -2,6 +2,7 @@ package com.db.weather_app_back.controller;
 
 import com.db.weather_app_back.domain.dto.ClimaRequest;
 import com.db.weather_app_back.domain.dto.ClimaResponse;
+import com.db.weather_app_back.domain.dto.ClimaUpdateRequest;
 import com.db.weather_app_back.domain.service.ClimaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -97,6 +98,14 @@ public class ClimaController {
 
     ) {
         return ResponseEntity.ok(climaService.buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(cidade, dias));
+    }
+
+    @PatchMapping("/editar/{id}")
+    public ResponseEntity<ClimaResponse> editarDadosMeteorologicos(
+            @PathVariable Long id,
+            @RequestBody @Valid ClimaUpdateRequest climaRequest
+            ){
+        return ResponseEntity.ok(climaService.editarDadosMeteorologicos(id, climaRequest));
     }
 
 }
