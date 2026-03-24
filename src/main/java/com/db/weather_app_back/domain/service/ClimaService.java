@@ -200,7 +200,7 @@ public class ClimaService {
         }
 
         if (climaUpdateRequest.tempoNoite() != null){
-            clima.setTempoDia(climaUpdateRequest.tempoNoite());
+            clima.setTempoNoite(climaUpdateRequest.tempoNoite());
         }
 
         Integer tempMinima = climaUpdateRequest.tempMinima();

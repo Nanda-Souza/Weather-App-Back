@@ -100,6 +100,11 @@ public class ClimaController {
         return ResponseEntity.ok(climaService.buscarDadosMeteorologicoDosProximosSeteDiasPorCidade(cidade, dias));
     }
 
+    @Operation(description = "Edita dados meteorológicos por id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Retorna os dados meteorológicos com os dados atualizados"),
+            @ApiResponse(responseCode = "404", description = "Não encontrou o meteorológico pelo id informado")
+    })
     @PatchMapping("/editar/{id}")
     public ResponseEntity<ClimaResponse> editarDadosMeteorologicos(
             @PathVariable Long id,
