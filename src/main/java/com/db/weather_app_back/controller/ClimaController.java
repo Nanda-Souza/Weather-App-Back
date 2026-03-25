@@ -113,4 +113,17 @@ public class ClimaController {
         return ResponseEntity.ok(climaService.editarDadosMeteorologicos(id, climaRequest));
     }
 
+    @Operation(description = "Edita dados meteorológicos por id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Retorna 204 como forma de confirmar que os dados meteorológicos foram excluidos"),
+            @ApiResponse(responseCode = "404", description = "Não encontrou o meteorológico pelo id informado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirDadosMeteorologicos(
+            @PathVariable Long id
+    ){
+        climaService.excluirDadosMeteorologicos(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

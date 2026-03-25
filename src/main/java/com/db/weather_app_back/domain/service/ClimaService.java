@@ -246,7 +246,15 @@ public class ClimaService {
 
     }
 
+    public void excluirDadosMeteorologicos(Long id){
+        Clima clima = climaRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND,
+                                "Dado Meteorológico com Id " + id + " não encontrado!")
+                );
 
+        climaRepository.delete(clima);
 
+    }
 
 }

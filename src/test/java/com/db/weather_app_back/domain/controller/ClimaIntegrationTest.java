@@ -377,5 +377,42 @@ public class ClimaIntegrationTest {
                 .andExpect(jsonPath("$.velocidadeVento").value(16));
     }
 
+    @Test
+    @DisplayName("Deve excluir os dados meteorológicos com sucesso!")
+    void deveExcluirDadosMeteorologicosComSucesso() throws Exception {
+
+        String json = """
+        {
+            "cidade": "Canoas",
+            "data": "2026-03-16",
+            "tempoDia": "LIMPO",
+            "tempoNoite": "LIMPO",
+            "tempMinima": 10,
+            "tempMaxima": 20,
+            "precipitacao": 5,
+            "humidade": 10,
+            "velocidadeVento": 15
+        }
+        """;
+
+        String response = mockMvc.perform(post("/clima/cadastrar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Number idNumber = JsonPath.read(response, "$.id");
+        Long id = idNumber.longValue();
+
+        mockMvc.perform(delete("/clima/{id}", id))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/clima/{id}", id))
+                .andExpect(status().isNotFound());
+
+    }
+
 
 }

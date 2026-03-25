@@ -579,6 +579,57 @@ public class ClimaServiceTest {
         verify(climaRepository, never()).save(any());
     }
 
+    @Test
+    @DisplayName("Deve excluir os dados meteorológicos com sucesso!")
+    void deveExcluirDadosMeteorologicosComSucesso() {
+
+        Long id = 1L;
+
+        Clima clima = new Clima(
+                "Canoas",
+                LocalDate.parse("2026-03-16"),
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        when(climaRepository.findById(id))
+                .thenReturn(Optional.of(clima));
+
+        climaService.excluirDadosMeteorologicos(id);
+
+        verify(climaRepository).findById(id);
+        verify(climaRepository).delete(clima);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção 404 ao tentar excluir dado inexistente!")
+    void deveLancarExcecaoQuandoIdNaoEncontradoParaExclusao() {
+
+        Long id = 99L;
+
+        when(climaRepository.findById(id)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> climaService.excluirDadosMeteorologicos(id)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode(),
+                "Deve retornar status code 404!");
+
+        assertEquals("Dado Meteorológico com Id 99 não encontrado!",
+                exception.getReason(),
+                "Deve retornar mensagem de não encontrado!");
+
+        verify(climaRepository).findById(id);
+        verify(climaRepository, never()).delete(any());
+    }
+
 
 
 }
