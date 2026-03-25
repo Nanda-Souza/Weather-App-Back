@@ -113,4 +113,12 @@ public class ClimaController {
         return ResponseEntity.ok(climaService.editarDadosMeteorologicos(id, climaRequest));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirDadosMeteorologicos(
+            @PathVariable Long id
+    ){
+        climaService.excluirDadosMeteorologicos(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
