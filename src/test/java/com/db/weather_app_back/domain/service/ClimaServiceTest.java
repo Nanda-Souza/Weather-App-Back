@@ -2,6 +2,7 @@ package com.db.weather_app_back.domain.service;
 
 import com.db.weather_app_back.domain.dto.ClimaRequest;
 import com.db.weather_app_back.domain.dto.ClimaResponse;
+import com.db.weather_app_back.domain.dto.ClimaUpdateRequest;
 import com.db.weather_app_back.domain.entity.Clima;
 import com.db.weather_app_back.domain.entity.Tempo;
 import com.db.weather_app_back.domain.repository.ClimaRepository;
@@ -458,6 +459,124 @@ public class ClimaServiceTest {
 
         verify(climaRepository)
                 .findByCidadeAndDataBetween(cidade, hoje, hoje.plusDays(dias));
+    }
+
+    @Test
+    @DisplayName("Deve atualizar os dados meteorológicos com sucesso!")
+    void deveAtualizarDadosMeteorologicosComSucesso() {
+
+        Long id = 1L;
+
+        Clima clima = new Clima(
+                "Canoas",
+                LocalDate.parse("2026-03-16"),
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        ClimaUpdateRequest request = new ClimaUpdateRequest(
+                Tempo.TEMPESTADE,
+                Tempo.TEMPESTADE,
+                12,
+                22,
+                6,
+                11,
+                16
+        );
+
+        when(climaRepository.findById(id)).thenReturn(Optional.of(clima));
+        when(climaRepository.save(any(Clima.class))).thenReturn(clima);
+
+        ClimaResponse response = climaService.editarDadosMeteorologicos(id, request);
+
+        assertNotNull(response, "O retorno não pode ser nulo!");
+        assertEquals("TEMPESTADE", response.tempoDia(), "Deve retornar TEMPESTADE para tempo dia!");
+        assertEquals("TEMPESTADE", response.tempoNoite(), "Deve retornar TEMPESTADE para tempo noite!");
+        assertEquals(12, response.tempMinima(), "Deve retornar 12 para temperatura mínima!");
+        assertEquals(22, response.tempMaxima(),"Deve retornar 22 para temperatura máxima!");
+        assertEquals(6, response.precipitacao(), "Deve retornar 6 para precipitação!");
+        assertEquals(11, response.humidade(), "Deve retornar 11 para humidade!");
+        assertEquals(16, response.velocidadeVento(), "Deve retornar 16 para velocidade e vento!");
+
+        verify(climaRepository).findById(id);
+        verify(climaRepository).save(clima);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar apenas os campos informados!")
+    void deveAtualizarApenasCamposInformados() {
+
+        Long id = 1L;
+
+        Clima clima = new Clima(
+                "Canoas",
+                LocalDate.parse("2026-03-16"),
+                Tempo.LIMPO,
+                Tempo.LIMPO,
+                10,
+                20,
+                5,
+                10,
+                15
+        );
+
+        ClimaUpdateRequest request = new ClimaUpdateRequest(
+                Tempo.TEMPESTADE,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        when(climaRepository.findById(id)).thenReturn(Optional.of(clima));
+        when(climaRepository.save(any(Clima.class))).thenReturn(clima);
+
+        ClimaResponse response = climaService.editarDadosMeteorologicos(id, request);
+
+        assertNotNull(response, "O retorno não pode ser nulo!");
+        assertEquals("TEMPESTADE", response.tempoDia(), "Deve retornar TEMPESTADE para tempo dia!");
+        assertEquals("LIMPO", response.tempoNoite(), "Deve retornar LIMPO para tempo noite!");
+
+        verify(climaRepository).findById(id);
+        verify(climaRepository).save(clima);
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção 404 ao tentar atualizar dado inexistente!")
+    void deveLancarExcecaoQuandoIdNaoEncontrado() {
+
+        Long id = 99L;
+
+        ClimaUpdateRequest request = new ClimaUpdateRequest(
+                Tempo.TEMPESTADE,
+                Tempo.LIMPO,
+                12,
+                22,
+                6,
+                11,
+                16
+        );
+
+        when(climaRepository.findById(id)).thenReturn(Optional.empty());
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> climaService.editarDadosMeteorologicos(id, request)
+        );
+
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode(), "Deve retornar status code 404!");
+        assertEquals("Dado Meteorológico com Id 99 não encontrado!",
+                exception.getReason(), "Deve retornar mensagem de não encontrado!");
+
+        verify(climaRepository).findById(id);
+        verify(climaRepository, never()).save(any());
     }
 
 

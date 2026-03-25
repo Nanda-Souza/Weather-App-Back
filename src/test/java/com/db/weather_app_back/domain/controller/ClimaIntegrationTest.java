@@ -319,5 +319,63 @@ public class ClimaIntegrationTest {
                 .andExpect(jsonPath("$[1].velocidadeVento").value(15));
     }
 
+    @Test
+    @DisplayName("Deve editar os dados meteorológicos com sucesso!")
+    void deveEditarDadosMeteorologicosComSucesso() throws Exception {
+
+        String jsonCreate = """
+        {
+            "cidade": "Canoas",
+            "data": "2026-03-16",
+            "tempoDia": "LIMPO",
+            "tempoNoite": "LIMPO",
+            "tempMinima": 10,
+            "tempMaxima": 20,
+            "precipitacao": 5,
+            "humidade": 10,
+            "velocidadeVento": 15
+        }
+        """;
+
+        String response = mockMvc.perform(post("/clima/cadastrar")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonCreate))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        Number idNumber = JsonPath.read(response, "$.id");
+        Long id = idNumber.longValue();
+
+        String jsonUpdate = """
+        {
+            "tempoDia": "TEMPESTADE",
+            "tempoNoite": "TEMPESTADE",
+            "tempMinima": 12,
+            "tempMaxima": 22,
+            "precipitacao": 6,
+            "humidade": 11,
+            "velocidadeVento": 16
+        }
+        """;
+
+        mockMvc.perform(patch("/clima/editar/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonUpdate))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.cidade").value("Canoas"))
+                .andExpect(jsonPath("$.data").value("2026-03-16"))
+                .andExpect(jsonPath("$.tempoDia").value("TEMPESTADE"))
+                .andExpect(jsonPath("$.tempoNoite").value("TEMPESTADE"))
+                .andExpect(jsonPath("$.tempMinima").value(12))
+                .andExpect(jsonPath("$.tempMaxima").value(22))
+                .andExpect(jsonPath("$.precipitacao").value(6))
+                .andExpect(jsonPath("$.humidade").value(11))
+                .andExpect(jsonPath("$.velocidadeVento").value(16));
+    }
+
 
 }
